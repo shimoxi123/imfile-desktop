@@ -13,7 +13,6 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4
 
-
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -42,6 +41,18 @@ jobs:
       - run: yarn install --network-timeout 100000
       - run: yarn run release
 
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            dist/*.deb
+            dist/*.rpm
+            dist/*.AppImage
+            dist/*.tar.gz
+          retention-days: 30
+          if-no-files-found: warn
+
   release-macos:
     runs-on: macos-latest
     permissions:
@@ -53,7 +64,6 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
-
 
       - name: Cache node modules
         id: cache-npm
@@ -77,6 +87,17 @@ jobs:
 
       - run: yarn install --network-timeout 100000
       - run: yarn run release
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.pkg
+          retention-days: 30
+          if-no-files-found: warn
 
   release-windows:
     runs-on: windows-latest
@@ -90,7 +111,6 @@ jobs:
         with:
           fetch-depth: 0
 
-
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -113,3 +133,14 @@ jobs:
 
       - run: yarn install --network-timeout 100000
       - run: yarn run release
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: |
+            dist/*.exe
+            dist/*.msi
+            dist/*.nupkg
+          retention-days: 30
+          if-no-files-found: warn
